@@ -26,6 +26,16 @@ s = load_content(BASE)
 
 
 # ============================================================
+# ENVIRONMENT / WEBSITE
+# ============================================================
+
+SITE_URL = os.getenv("SITE_URL", "").strip().rstrip("/")
+SITE_LIVE = os.getenv("SITE_LIVE", "").lower() == "true"
+
+preview = not SITE_LIVE
+
+
+# ============================================================
 # HELFER
 # ============================================================
 
@@ -34,7 +44,7 @@ def e(v):
 
 
 def safe_url(v):
-    v = str(v or "")
+    v = str(v or "").strip()
 
     return (
         v
@@ -50,6 +60,18 @@ def safe_url(v):
     )
 
 
+def absolute_url(value):
+    value = str(value or "").strip()
+
+    if value.startswith(("https://", "http://")):
+        return value
+
+    if SITE_URL and value.startswith("/"):
+        return SITE_URL + value
+
+    return ""
+
+
 def img(src, alt, cls=""):
     src = safe_url(src)
 
@@ -63,6 +85,37 @@ def img(src, alt, cls=""):
         f'class="{e(cls)}" '
         f'loading="lazy" '
         f'decoding="async">'
+    )
+
+
+# ============================================================
+# LIVE-MODUS VALIDIERUNG
+# ============================================================
+
+if not preview:
+
+    assert SITE_URL.startswith(
+        "https://"
+    ), "SITE_URL fehlt oder ist ungültig"
+
+    assert (
+        s.get("email")
+        and "@" in s["email"]
+    ), "Kontakt-E-Mail fehlt"
+
+    assert (
+        s.get("imprint", "").strip()
+        and s.get("privacy", "").strip()
+    ), "Impressum/Datenschutz fehlen"
+
+    assert all(
+        not p.get("placeholder")
+        and p.get("image")
+        for p in s["projects"]
+        if p.get("visible", True)
+    ), (
+        "Gestaltungsvorschauen müssen "
+        "vor Livegang ersetzt oder ausgeblendet werden"
     )
 
 
@@ -131,6 +184,7 @@ for n, p in enumerate(projects):
             <div class="project-meta">
                 <div>
                     <h3>{e(p['title'])}</h3>
+
                     <p>
                         {e(p['category'])}
                         / BLICKWERT STUDIO
@@ -156,6 +210,7 @@ for n, p in enumerate(projects):
 services = "".join(
     f"""
     <article class="service">
+
         <span class="service-number">
             0{i + 1}
         </span>
@@ -173,6 +228,7 @@ services = "".join(
                 {e(p["tags"])}
             </span>
         </div>
+
     </article>
     """
     for i, p in enumerate(s["services"])
@@ -186,6 +242,7 @@ services = "".join(
 steps = "".join(
     f"""
     <article class="step">
+
         <span>
             0{i + 1} /
         </span>
@@ -197,6 +254,7 @@ steps = "".join(
         <p>
             {e(p["text"])}
         </p>
+
     </article>
     """
     for i, p in enumerate(s["process"])
@@ -220,6 +278,7 @@ hero_art = (
         class="hero-mark"
         alt=""
     >
+
     <span class="art-label">
         A DIFFERENT POINT OF VIEW.
     </span>
@@ -250,6 +309,7 @@ portrait = (
     )
     or """
     <strong>Sergen.</strong>
+
     <span>
         DER BLICK HINTER BLICKWERT.
     </span>
@@ -281,31 +341,97 @@ navsocial = (
 
 
 # ============================================================
-# LIVE / PREVIEW MODUS
+# SEO
 # ============================================================
 
-preview = os.getenv("SITE_LIVE") != "true"
+canonical_url = (
+    f"{SITE_URL}/"
+    if SITE_URL
+    else ""
+)
 
-if not preview:
+og_image_url = absolute_url(
+    s.get("hero_image", "")
+)
 
-    assert (
-        s.get("email")
-        and "@" in s["email"]
-    ), "Kontakt-E-Mail fehlt"
+canonical_html = (
+    f"""
+    <link
+        rel="canonical"
+        href="{e(canonical_url)}"
+    >
 
-    assert (
-        s.get("imprint", "").strip()
-        and s.get("privacy", "").strip()
-    ), "Impressum/Datenschutz fehlen"
+    <meta
+        property="og:url"
+        content="{e(canonical_url)}"
+    >
+    """
+    if canonical_url
+    else ""
+)
 
-    assert all(
-        not p.get("placeholder")
-        and p.get("image")
-        for p in projects
-    ), (
-        "Gestaltungsvorschauen müssen "
-        "vor Livegang ersetzt oder ausgeblendet werden"
+social_image_html = (
+    f"""
+    <meta
+        property="og:image"
+        content="{e(og_image_url)}"
+    >
+
+    <meta
+        property="og:image:alt"
+        content="{e(s.get('hero_image_alt', s['brand']))}"
+    >
+
+    <meta
+        name="twitter:image"
+        content="{e(og_image_url)}"
+    >
+    """
+    if og_image_url
+    else ""
+)
+
+
+# ============================================================
+# STRUCTURED DATA / JSON-LD
+# ============================================================
+
+organization_data = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": s["brand"],
+    "description": s["intro"],
+}
+
+if canonical_url:
+
+    organization_data["url"] = canonical_url
+
+    organization_data["logo"] = (
+        SITE_URL + "/assets/logo.svg"
     )
+
+if s.get("email"):
+
+    organization_data["email"] = (
+        s["email"]
+    )
+
+if instagram:
+
+    organization_data["sameAs"] = [
+        instagram
+    ]
+
+
+structured_data = json.dumps(
+    organization_data,
+    ensure_ascii=False,
+    separators=(",", ":"),
+).replace(
+    "</",
+    "<\\/",
+)
 
 
 # ============================================================
@@ -330,6 +456,11 @@ html_page = f"""
         {e(s['brand'])} — Foto, Film & Social Content
     </title>
 
+
+    <!-- ==================================================
+         BASIC SEO
+    =================================================== -->
+
     <meta
         name="description"
         content="{e(s['intro'])}"
@@ -340,14 +471,16 @@ html_page = f"""
         content="{'noindex,nofollow' if preview else 'index,follow'}"
     >
 
-    <meta
-        name="theme-color"
-        content="#121717"
-    >
+    {canonical_html}
+
+
+    <!-- ==================================================
+         OPEN GRAPH
+    =================================================== -->
 
     <meta
         property="og:title"
-        content="{e(s['brand'])}"
+        content="{e(s['brand'])} — Foto, Film & Social Content"
     >
 
     <meta
@@ -358,6 +491,48 @@ html_page = f"""
     <meta
         property="og:type"
         content="website"
+    >
+
+    <meta
+        property="og:site_name"
+        content="{e(s['brand'])}"
+    >
+
+    <meta
+        property="og:locale"
+        content="de_DE"
+    >
+
+    {social_image_html}
+
+
+    <!-- ==================================================
+         TWITTER / SOCIAL
+    =================================================== -->
+
+    <meta
+        name="twitter:card"
+        content="summary_large_image"
+    >
+
+    <meta
+        name="twitter:title"
+        content="{e(s['brand'])} — Foto, Film & Social Content"
+    >
+
+    <meta
+        name="twitter:description"
+        content="{e(s['intro'])}"
+    >
+
+
+    <!-- ==================================================
+         WEBSITE
+    =================================================== -->
+
+    <meta
+        name="theme-color"
+        content="#121717"
     >
 
     <link
@@ -376,10 +551,20 @@ html_page = f"""
         defer
     ></script>
 
+
+    <!-- ==================================================
+         STRUCTURED DATA
+    =================================================== -->
+
+    <script type="application/ld+json">
+        {structured_data}
+    </script>
+
 </head>
 
 
 <body>
+
 
 <a
     class="skip"
@@ -408,6 +593,7 @@ html_page = f"""
             >
         </a>
 
+
         <button
             class="menu"
             aria-expanded="false"
@@ -415,6 +601,7 @@ html_page = f"""
         >
             Menü +
         </button>
+
 
         <nav
             class="nav-links"
@@ -439,6 +626,7 @@ html_page = f"""
                 class="nav-contact"
             >
                 Projekt anfragen
+
                 <span aria-hidden="true">
                     ↗
                 </span>
@@ -493,6 +681,7 @@ html_page = f"""
                     href="#arbeiten"
                 >
                     Arbeiten entdecken
+
                     <span aria-hidden="true">
                         ↗
                     </span>
@@ -541,19 +730,25 @@ html_page = f"""
     aria-label="Fotografie, Film, Social Content"
 >
 
-    <span>Fotografie</span>
+    <span>
+        Fotografie
+    </span>
 
     <i aria-hidden="true">
         ✳
     </i>
 
-    <span>Film & Video</span>
+    <span>
+        Film & Video
+    </span>
 
     <i aria-hidden="true">
         ✳
     </i>
 
-    <span>Social Content</span>
+    <span>
+        Social Content
+    </span>
 
     <i aria-hidden="true">
         ✳
@@ -661,7 +856,10 @@ html_page = f"""
         'ENTWURF — Die markierten Flächen sind '
         'visuelle Platzhalter. Eigene Arbeiten folgen.'
         '</p>'
-        if any(p.get("placeholder") for p in projects)
+        if any(
+            p.get("placeholder")
+            for p in projects
+        )
         else ""
     }
 
@@ -822,6 +1020,7 @@ html_page = f"""
             <p hidden>
 
                 <label>
+
                     Nicht ausfüllen:
 
                     <input
@@ -1035,7 +1234,7 @@ html_page = f"""
 
 
 <!-- ======================================================
-     PROJEKT / RECHTLICHES DIALOG
+     DIALOG
 ======================================================= -->
 
 <dialog
@@ -1066,6 +1265,10 @@ html_page = f"""
 </noscript>
 
 
+<!-- ======================================================
+     WEBSITE-DATEN FÜR JAVASCRIPT
+======================================================= -->
+
 <script
     type="application/json"
     id="site-data"
@@ -1079,7 +1282,10 @@ html_page = f"""
             "privacy": s["privacy"],
         },
         ensure_ascii=False,
-    ).replace("<", chr(92) + "u003c")
+    ).replace(
+        "<",
+        chr(92) + "u003c"
+    )
 }
 </script>
 
@@ -1101,6 +1307,53 @@ html_page = f"""
 
 
 # ============================================================
+# ROBOTS.TXT
+# ============================================================
+
+if preview:
+
+    robots = """User-agent: *
+Disallow: /
+"""
+
+else:
+
+    robots = f"""User-agent: *
+Allow: /
+
+Sitemap: {SITE_URL}/sitemap.xml
+"""
+
+
+(OUT / "robots.txt").write_text(
+    robots,
+    encoding="utf-8",
+)
+
+
+# ============================================================
+# SITEMAP.XML
+# ============================================================
+
+if SITE_URL:
+
+    sitemap = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+    xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+>
+    <url>
+        <loc>{e(SITE_URL)}/</loc>
+    </url>
+</urlset>
+"""
+
+    (OUT / "sitemap.xml").write_text(
+        sitemap,
+        encoding="utf-8",
+    )
+
+
+# ============================================================
 # DECAP CMS
 # ============================================================
 
@@ -1113,6 +1366,7 @@ url = os.getenv(
     "REPOSITORY_URL",
     "",
 )
+
 
 if not repo and "github.com" in url:
 
@@ -1152,5 +1406,43 @@ config = build_config(
 )
 
 
-print("Build erfolgreich.")
-print(f"Ausgabe: {OUT}")
+# ============================================================
+# BUILD INFO
+# ============================================================
+
+print("")
+print("========================================")
+print("BLICKWERT BUILD")
+print("========================================")
+
+print(
+    "Modus:",
+    "LIVE" if SITE_LIVE else "PREVIEW"
+)
+
+print(
+    "Website:",
+    SITE_URL if SITE_URL else "keine SITE_URL gesetzt"
+)
+
+print(
+    "Robots:",
+    "index,follow"
+    if SITE_LIVE
+    else "noindex,nofollow"
+)
+
+print(
+    "Sitemap:",
+    "erstellt"
+    if SITE_URL
+    else "nicht erstellt"
+)
+
+print(
+    "Ausgabe:",
+    OUT
+)
+
+print("========================================")
+print("")
