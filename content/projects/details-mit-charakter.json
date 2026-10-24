@@ -1,14 +1,14 @@
 {
-  "title": "Details. Mit Charakter.",
-  "category": "Foto",
-  "description": "Hier ist Platz für eine ausgewählte Fotostrecke. Die abstrakte Grafik ist ein Platzhalter, keine Kundenarbeit.",
-  "image": "",
   "image_alt": "",
-  "video": "",
-  "visible": true,
-  "placeholder": true,
   "theme": "detail",
-  "order": 2,
   "featured": false,
-  "gallery": []
+  "order": 2,
+  "visible": true,
+  "gallery": [],
+  "placeholder": false,
+  "title": "Details. Mit Charakter.",
+  "video": "",
+  "image": "",
+  "description": "Hier ist Platz für eine ausgewählte Fotostrecke. Die abstrakte Grafik ist ein Platzhalter, keine Kundenarbeit.",
+  "category": "Foto"
 }
