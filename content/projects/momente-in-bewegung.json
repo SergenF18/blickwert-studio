@@ -1,14 +1,14 @@
 {
-  "title": "Momente. In Bewegung.",
-  "category": "Social",
-  "description": "Hier können Reels, Events oder regelmäßige Content-Produktionen gezeigt werden. Noch keine veröffentlichte Referenz.",
-  "image": "",
   "image_alt": "",
-  "video": "",
-  "visible": true,
-  "placeholder": true,
   "theme": "motion",
-  "order": 3,
   "featured": false,
-  "gallery": []
+  "order": 3,
+  "visible": true,
+  "gallery": [],
+  "placeholder": false,
+  "title": "Momente. In Bewegung.",
+  "video": "",
+  "image": "",
+  "description": "Hier können Reels, Events oder regelmäßige Content-Produktionen gezeigt werden. Noch keine veröffentlichte Referenz.",
+  "category": "Social"
 }
