@@ -127,17 +127,50 @@ document
       ),
     ),
   );
-document.querySelector(".contact-form").addEventListener("submit", (e) => {
+
+  document.querySelector(".contact-form").addEventListener("submit", async (e) => {
   e.preventDefault();
+
+  const form = e.currentTarget;
   const status = document.querySelector(".form-status");
-  if (!data.email || !/^\S+@\S+\.\S+$/.test(data.email)) {
+  const button = form.querySelector('button[type="submit"]');
+
+  const originalButtonText = button.innerHTML;
+
+  button.disabled = true;
+  button.textContent = "Wird gesendet …";
+  status.textContent = "";
+
+  try {
+    const formData = new FormData(form);
+
+    formData.set("form-name", form.getAttribute("name"));
+
+    const response = await fetch("/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams(formData).toString(),
+    });
+
+    if (!response.ok) {
+      throw new Error("Formular konnte nicht gesendet werden.");
+    }
+
+    form.reset();
+
     status.textContent =
-      "Noch im Entwurfsmodus: Die Kontaktadresse ist nicht eingerichtet. Es wurde nichts gesendet.";
-    return;
+      "Danke! Deine Anfrage wurde erfolgreich gesendet. Ich melde mich bei dir.";
+
+  } catch (error) {
+    console.error(error);
+
+    status.textContent =
+      "Das hat leider nicht funktioniert. Bitte versuche es noch einmal.";
+
+  } finally {
+    button.disabled = false;
+    button.innerHTML = originalButtonText;
   }
-  const f = new FormData(e.target);
-  const body = `Hallo Sergen,\n\n${f.get("message")}\n\nName: ${f.get("name")}\nUnternehmen: ${f.get("company")}\nE-Mail: ${f.get("email")}`;
-  location.href = `mailto:${encodeURIComponent(data.email)}?subject=${encodeURIComponent("Projektanfrage: " + f.get("service"))}&body=${encodeURIComponent(body)}`;
-  status.textContent =
-    "Die Anfrage ist für dein E-Mail-Programm vorbereitet. Bitte sende sie dort ab.";
 });
