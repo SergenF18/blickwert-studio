@@ -1,1 +1,956 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Blickwert Studio · Inhalte verwalten</title><link rel="icon" href="/assets/favicon.svg"><style>body{background:#121717;color:#f2f1e9;font:16px/1.7 Arial;margin:0}main{max-width:620px;margin:10vh auto;padding:32px}img{width:240px}h1{font-size:42px;line-height:1.1;letter-spacing:-2px}p,li{color:#a5aeab}a{color:#28d0c7}code{background:#ffffff12;padding:4px 8px}#status{color:#28d0c7}</style></head><body><main id="setup"><img src="/assets/logo.svg" alt="Blickwert Studio"><h1>Dein Studio.<br>Deine Inhalte.</h1><p id="status">Verbindung wird geprüft …</p><div id="instructions" hidden><p>Die Inhaltsverwaltung ist vorbereitet. Der echte Login wird nach der Verbindung mit GitHub und Netlify aktiviert.</p><ol><li>Projekt als GitHub-Repository anlegen.</li><li>Repository in Netlify importieren.</li><li><code>GITHUB_REPOSITORY</code> als <code>BENUTZER/REPOSITORY</code> einstellen.</li><li>GitHub-OAuth in Netlify verbinden.</li></ol><p>Danach bearbeitest du hier Texte, Bilder, Leistungen und Projekte. Es gibt kein öffentliches Standardpasswort.</p></div><a href="/">← Zur Website</a></main><script>window.CMS_MANUAL_INIT=true;fetch('/admin/config.json').then(r=>{if(!r.ok)throw Error('config');return r.json()}).then(config=>{if(config.backend.repo.startsWith('SETUP_REQUIRED/')){document.querySelector('#status').textContent='Einrichtung noch nicht abgeschlossen';document.querySelector('#instructions').hidden=false;return}const script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/decap-cms@^3.0.0/dist/decap-cms.js';script.onload=()=>{document.querySelector('#setup').remove();CMS.init({config,load_config_file:false})};script.onerror=()=>document.querySelector('#status').textContent='Die Inhaltsverwaltung konnte nicht geladen werden. Bitte Verbindung prüfen und neu laden.';document.body.append(script)}).catch(()=>document.querySelector('#status').textContent='Konfiguration nicht erreichbar. Bitte Website neu bauen.');</script></body></html>
+<!doctype html>
+
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <meta
+    name="robots"
+    content="noindex,nofollow"
+  >
+
+  <meta
+    name="theme-color"
+    content="#121717"
+  >
+
+  <title>Blickwert Studio · Admin</title>
+
+  <link
+    rel="icon"
+    href="/assets/favicon.svg"
+  >
+
+  <style>
+    /* =====================================================
+       BLICKWERT ADMIN THEME
+    ===================================================== */
+
+    :root {
+      --bw-bg: #0d1212;
+      --bw-bg-soft: #121717;
+      --bw-panel: #161d1c;
+      --bw-panel-hover: #1b2423;
+
+      --bw-text: #f2f1e9;
+      --bw-muted: #98a29f;
+
+      --bw-accent: #28d0c7;
+      --bw-accent-soft: rgba(40, 208, 199, 0.12);
+
+      --bw-border: rgba(242, 241, 233, 0.10);
+      --bw-border-strong: rgba(242, 241, 233, 0.18);
+
+      --bw-radius: 14px;
+      --bw-radius-lg: 20px;
+
+      --bw-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.22);
+    }
+
+
+    * {
+      box-sizing: border-box;
+    }
+
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+
+      background: var(--bw-bg);
+
+      color: var(--bw-text);
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+      -webkit-font-smoothing: antialiased;
+    }
+
+
+    body {
+      overflow-x: hidden;
+    }
+
+
+    /* =====================================================
+       BLICKWERT TOPBAR
+    ===================================================== */
+
+    #blickwert-admin-bar {
+      position: fixed;
+
+      top: 0;
+      left: 0;
+      right: 0;
+
+      z-index: 999999;
+
+      height: 64px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 0 20px;
+
+      background:
+        rgba(13, 18, 18, 0.94);
+
+      border-bottom:
+        1px solid var(--bw-border);
+
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+
+      box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.15);
+    }
+
+
+    .blickwert-admin-brand {
+      display: flex;
+      align-items: center;
+
+      gap: 14px;
+
+      min-width: 0;
+    }
+
+
+    .blickwert-admin-logo {
+      display: flex;
+      align-items: center;
+
+      height: 28px;
+    }
+
+
+    .blickwert-admin-logo img {
+      display: block;
+
+      width: auto;
+      height: 28px;
+    }
+
+
+    .blickwert-admin-divider {
+      width: 1px;
+      height: 24px;
+
+      background:
+        var(--bw-border-strong);
+    }
+
+
+    .blickwert-admin-copy {
+      display: flex;
+      flex-direction: column;
+
+      line-height: 1.1;
+    }
+
+
+    .blickwert-admin-copy strong {
+      color: var(--bw-text);
+
+      font-size: 13px;
+      font-weight: 700;
+
+      letter-spacing: 0.04em;
+
+      text-transform: uppercase;
+    }
+
+
+    .blickwert-admin-copy span {
+      margin-top: 4px;
+
+      color: var(--bw-muted);
+
+      font-size: 11px;
+
+      letter-spacing: 0.03em;
+    }
+
+
+    .blickwert-admin-actions {
+      display: flex;
+      align-items: center;
+
+      gap: 10px;
+    }
+
+
+    .admin-site-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      gap: 8px;
+
+      min-height: 40px;
+
+      padding: 0 17px;
+
+      border:
+        1px solid var(--bw-border-strong);
+
+      border-radius: 999px;
+
+      background:
+        rgba(255, 255, 255, 0.025);
+
+      color: var(--bw-text);
+
+      font-size: 13px;
+      font-weight: 600;
+
+      text-decoration: none;
+
+      transition:
+        color 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+    }
+
+
+    .admin-site-button:hover {
+      color: #071010;
+
+      background: var(--bw-accent);
+
+      border-color: var(--bw-accent);
+
+      transform: translateY(-1px);
+    }
+
+
+    .admin-site-button:focus-visible {
+      outline:
+        2px solid var(--bw-accent);
+
+      outline-offset: 3px;
+    }
+
+
+    /* =====================================================
+       SETUP / LADEBILDSCHIRM
+    ===================================================== */
+
+    #setup {
+      width:
+        min(680px, calc(100% - 40px));
+
+      margin:
+        0 auto;
+
+      padding:
+        150px 0 80px;
+    }
+
+
+    .setup-card {
+      padding: 42px;
+
+      border:
+        1px solid var(--bw-border);
+
+      border-radius:
+        var(--bw-radius-lg);
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.035),
+          rgba(255, 255, 255, 0.015)
+        );
+
+      box-shadow:
+        var(--bw-shadow);
+    }
+
+
+    #setup .setup-mark {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      margin-bottom: 26px;
+
+      padding: 8px 12px;
+
+      border:
+        1px solid rgba(40, 208, 199, 0.22);
+
+      border-radius: 999px;
+
+      background:
+        var(--bw-accent-soft);
+
+      color:
+        var(--bw-accent);
+
+      font-size: 11px;
+      font-weight: 700;
+
+      letter-spacing: 0.12em;
+
+      text-transform: uppercase;
+    }
+
+
+    #setup h1 {
+      max-width: 560px;
+
+      margin:
+        0 0 20px;
+
+      color:
+        var(--bw-text);
+
+      font-size:
+        clamp(42px, 8vw, 68px);
+
+      font-weight: 600;
+
+      line-height: 0.98;
+
+      letter-spacing:
+        -0.055em;
+    }
+
+
+    #setup h1 span {
+      color:
+        var(--bw-accent);
+    }
+
+
+    #setup p,
+    #setup li {
+      color:
+        var(--bw-muted);
+
+      line-height: 1.7;
+    }
+
+
+    #status {
+      display: flex;
+      align-items: center;
+
+      gap: 10px;
+
+      margin-top: 28px;
+
+      color:
+        var(--bw-accent) !important;
+
+      font-weight: 600;
+    }
+
+
+    #status::before {
+      content: "";
+
+      width: 8px;
+      height: 8px;
+
+      flex: 0 0 auto;
+
+      border-radius: 50%;
+
+      background:
+        var(--bw-accent);
+
+      box-shadow:
+        0 0 0 6px
+        rgba(40, 208, 199, 0.10);
+    }
+
+
+    #instructions {
+      margin-top: 32px;
+
+      padding-top: 26px;
+
+      border-top:
+        1px solid var(--bw-border);
+    }
+
+
+    #instructions a {
+      color:
+        var(--bw-accent);
+    }
+
+
+    #instructions code {
+      padding: 3px 7px;
+
+      border:
+        1px solid var(--bw-border);
+
+      border-radius: 6px;
+
+      background:
+        rgba(255, 255, 255, 0.04);
+
+      color:
+        var(--bw-text);
+    }
+
+
+    /* =====================================================
+       DECAP CMS BASIS
+    ===================================================== */
+
+    #nc-root {
+      padding-top: 64px !important;
+
+      background:
+        var(--bw-bg) !important;
+    }
+
+
+    #nc-root,
+    #nc-root > div {
+      min-height: 100vh;
+
+      background-color:
+        var(--bw-bg) !important;
+    }
+
+
+    /*
+      Decap nutzt intern dynamische Klassen.
+      Deshalb bleiben die Overrides bewusst
+      möglichst allgemein.
+    */
+
+
+    #nc-root header {
+      border-color:
+        var(--bw-border) !important;
+
+      box-shadow: none !important;
+    }
+
+
+    #nc-root aside {
+      border-color:
+        var(--bw-border) !important;
+    }
+
+
+    /* =====================================================
+       INPUTS
+    ===================================================== */
+
+    #nc-root input,
+    #nc-root textarea,
+    #nc-root select {
+      border:
+        1px solid var(--bw-border-strong)
+        !important;
+
+      border-radius:
+        12px !important;
+
+      background:
+        var(--bw-panel) !important;
+
+      color:
+        var(--bw-text) !important;
+
+      box-shadow:
+        none !important;
+
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+    }
+
+
+    #nc-root textarea {
+      min-height: 120px;
+    }
+
+
+    #nc-root input:hover,
+    #nc-root textarea:hover,
+    #nc-root select:hover {
+      border-color:
+        rgba(40, 208, 199, 0.40)
+        !important;
+    }
+
+
+    #nc-root input:focus,
+    #nc-root textarea:focus,
+    #nc-root select:focus {
+      border-color:
+        var(--bw-accent)
+        !important;
+
+      outline: none !important;
+
+      box-shadow:
+        0 0 0 3px
+        rgba(40, 208, 199, 0.11)
+        !important;
+    }
+
+
+    #nc-root input::placeholder,
+    #nc-root textarea::placeholder {
+      color:
+        rgba(242, 241, 233, 0.38)
+        !important;
+    }
+
+
+    /* =====================================================
+       BUTTONS
+    ===================================================== */
+
+    #nc-root button {
+      border-radius:
+        10px !important;
+
+      transition:
+        transform 0.16s ease,
+        opacity 0.16s ease,
+        border-color 0.16s ease
+        !important;
+    }
+
+
+    #nc-root button:hover {
+      transform:
+        translateY(-1px);
+    }
+
+
+    #nc-root button:focus-visible {
+      outline:
+        2px solid var(--bw-accent)
+        !important;
+
+      outline-offset:
+        2px;
+    }
+
+
+    /* =====================================================
+       LINKS
+    ===================================================== */
+
+    #nc-root a {
+      transition:
+        opacity 0.18s ease,
+        color 0.18s ease;
+    }
+
+
+    #nc-root a:hover {
+      opacity: 0.78;
+    }
+
+
+    /* =====================================================
+       CARDS / PANELS
+    ===================================================== */
+
+    #nc-root
+    [class*="Card"],
+
+    #nc-root
+    [class*="card"],
+
+    #nc-root
+    [class*="Panel"],
+
+    #nc-root
+    [class*="panel"] {
+      border-color:
+        var(--bw-border)
+        !important;
+
+      border-radius:
+        var(--bw-radius)
+        !important;
+
+      box-shadow:
+        none !important;
+    }
+
+
+    /* =====================================================
+       SCROLLBAR
+    ===================================================== */
+
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+
+    ::-webkit-scrollbar-track {
+      background:
+        var(--bw-bg);
+    }
+
+
+    ::-webkit-scrollbar-thumb {
+      border:
+        3px solid var(--bw-bg);
+
+      border-radius: 999px;
+
+      background:
+        #35413f;
+    }
+
+
+    ::-webkit-scrollbar-thumb:hover {
+      background:
+        var(--bw-accent);
+    }
+
+
+    /* =====================================================
+       MOBILE
+    ===================================================== */
+
+    @media (max-width: 720px) {
+
+      #blickwert-admin-bar {
+        height: 58px;
+
+        padding:
+          0 12px;
+      }
+
+
+      #nc-root {
+        padding-top:
+          58px !important;
+      }
+
+
+      .blickwert-admin-divider,
+      .blickwert-admin-copy span {
+        display: none;
+      }
+
+
+      .blickwert-admin-logo img {
+        max-width: 120px;
+
+        height: 24px;
+      }
+
+
+      .admin-site-button {
+        min-height: 38px;
+
+        padding:
+          0 13px;
+
+        font-size:
+          12px;
+      }
+
+
+      #setup {
+        padding-top:
+          110px;
+      }
+
+
+      .setup-card {
+        padding:
+          28px 22px;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =======================================================
+     BLICKWERT ADMIN BAR
+======================================================== -->
+
+<header id="blickwert-admin-bar">
+
+  <div class="blickwert-admin-brand">
+
+    <a
+      class="blickwert-admin-logo"
+      href="/admin/"
+      aria-label="Blickwert Admin Startseite"
+    >
+      <img
+        src="/assets/logo.svg"
+        alt="Blickwert Studio"
+      >
+    </a>
+
+
+    <span
+      class="blickwert-admin-divider"
+      aria-hidden="true"
+    ></span>
+
+
+    <div class="blickwert-admin-copy">
+
+      <strong>
+        Studio Admin
+      </strong>
+
+      <span>
+        Inhalte & Portfolio
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <div class="blickwert-admin-actions">
+
+    <a
+      class="admin-site-button"
+      href="/"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Website ansehen
+
+      <span aria-hidden="true">
+        ↗
+      </span>
+    </a>
+
+  </div>
+
+</header>
+
+
+<!-- =======================================================
+     LADEBILDSCHIRM
+======================================================== -->
+
+<main id="setup">
+
+  <div class="setup-card">
+
+    <div class="setup-mark">
+      Blickwert CMS
+    </div>
+
+
+    <h1>
+      Dein Studio.<br>
+      <span>Deine Inhalte.</span>
+    </h1>
+
+
+    <p>
+      Projekte, Leistungen, Bilder und Website-Inhalte
+      zentral an einem Ort verwalten.
+    </p>
+
+
+    <p id="status">
+      Verbindung wird geprüft …
+    </p>
+
+
+    <div
+      id="instructions"
+      hidden
+    >
+
+      <p>
+        Die Inhaltsverwaltung ist vorbereitet,
+        aber die Verbindung zum Repository
+        wurde noch nicht vollständig eingerichtet.
+      </p>
+
+      <ol>
+
+        <li>
+          GitHub-Repository verbinden.
+        </li>
+
+        <li>
+          Website über Netlify deployen.
+        </li>
+
+        <li>
+          GitHub OAuth aktivieren.
+        </li>
+
+      </ol>
+
+    </div>
+
+  </div>
+
+</main>
+
+
+<!-- =======================================================
+     DECAP CMS
+======================================================== -->
+
+<script>
+
+  window.CMS_MANUAL_INIT = true;
+
+
+  fetch("/admin/config.json")
+
+    .then((response) => {
+
+      if (!response.ok) {
+        throw new Error(
+          "CMS-Konfiguration nicht erreichbar."
+        );
+      }
+
+      return response.json();
+
+    })
+
+    .then((config) => {
+
+      if (
+        config.backend.repo
+        &&
+        config.backend.repo.startsWith(
+          "SETUP_REQUIRED/"
+        )
+      ) {
+
+        document.querySelector(
+          "#status"
+        ).textContent =
+          "Einrichtung noch nicht abgeschlossen.";
+
+        document.querySelector(
+          "#instructions"
+        ).hidden = false;
+
+        return;
+
+      }
+
+
+      const script =
+        document.createElement(
+          "script"
+        );
+
+
+      script.src =
+        "https://cdn.jsdelivr.net/npm/decap-cms@^3.0.0/dist/decap-cms.js";
+
+
+      script.onload = () => {
+
+        const setup =
+          document.querySelector(
+            "#setup"
+          );
+
+        if (setup) {
+          setup.remove();
+        }
+
+
+        CMS.init({
+          config,
+          load_config_file: false,
+        });
+
+
+        /*
+         * Falls Decap eine Vorschau anzeigt,
+         * wird das echte Website-CSS geladen.
+         */
+
+        try {
+
+          CMS.registerPreviewStyle(
+            "/styles.css"
+          );
+
+        } catch (error) {
+
+          console.info(
+            "Preview-Styles konnten nicht registriert werden.",
+            error
+          );
+
+        }
+
+      };
+
+
+      script.onerror = () => {
+
+        document.querySelector(
+          "#status"
+        ).textContent =
+          "Die Inhaltsverwaltung konnte nicht geladen werden.";
+
+      };
+
+
+      document.body.append(
+        script
+      );
+
+    })
+
+    .catch((error) => {
+
+      console.error(error);
+
+      document.querySelector(
+        "#status"
+      ).textContent =
+        "CMS-Konfiguration nicht erreichbar. Bitte neu deployen.";
+
+    });
+
+</script>
+
+
+</body>
+
+</html>

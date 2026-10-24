@@ -320,22 +320,68 @@ def build_config(repo, branch="main"):
     }
 
     return {
-        "backend": {
-            "name": "github",
-            "repo": repo,
-            "branch": branch,
-        },
 
-        "media_folder": "public/uploads",
-        "public_folder": "/uploads",
+    "backend": {
+        "name": "github",
+        "repo": repo,
+        "branch": branch,
+    },
 
-        "locale": "de",
 
-        "logo_url": "/assets/logo.svg",
+    # ==========================================
+    # WEBSITE
+    # ==========================================
 
-        "collections": [
-            website,
-            services,
-            projects,
-        ],
-    }
+    "site_url":
+        "https://blickwert-studio.de",
+
+    "display_url":
+        "https://blickwert-studio.de",
+
+
+    # ==========================================
+    # MEDIEN
+    # ==========================================
+
+    "media_folder":
+        "public/uploads",
+
+    "public_folder":
+        "/uploads",
+
+
+    # ==========================================
+    # SPRACHE
+    # ==========================================
+
+    "locale":
+        "de",
+
+
+    # ==========================================
+    # BRANDING
+    # ==========================================
+
+    "logo": {
+        "src":
+            "/assets/logo.svg",
+
+        "show_in_header":
+            True,
+    },
+
+
+    # ==========================================
+    # CMS
+    # ==========================================
+
+    "show_preview_links":
+        True,
+
+
+    "collections": [
+        website,
+        services,
+        projects,
+    ],
+}
