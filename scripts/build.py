@@ -52,10 +52,6 @@ preview = not SITE_LIVE
 # FESTE FALLBACK-KONTAKTDATEN
 # ============================================================
 
-# Wichtig:
-# Diese Werte greifen auch dann,
-# wenn das CMS-Feld aus irgendeinem Grund leer ist.
-
 contact_email = (
     s.get("email")
     or "kontakt@blickwert-studio.de"
@@ -182,21 +178,43 @@ if not preview:
         "Impressum/Datenschutz fehlen"
     )
 
-    assert all(
-        (
-            not project.get("placeholder")
-            and project.get("image")
-        )
+    # Platzhalter blockieren den Live-Build NICHT mehr.
+    # Stattdessen erscheint nur eine Warnung im Build-Log.
+
+    placeholder_projects = [
+        project
         for project in s["projects"]
-        if project.get(
-            "visible",
-            True,
+        if (
+            project.get("visible", True)
+            and (
+                project.get("placeholder")
+                or not project.get("image")
+            )
         )
-    ), (
-        "Gestaltungsvorschauen müssen "
-        "vor Livegang ersetzt "
-        "oder ausgeblendet werden"
-    )
+    ]
+
+    if placeholder_projects:
+
+        print("")
+        print("⚠️ WARNUNG:")
+        print(
+            "Folgende sichtbare Projekte enthalten "
+            "noch Platzhalter oder kein Vorschaubild:"
+        )
+
+        for project in placeholder_projects:
+            print(
+                " -",
+                project.get(
+                    "title",
+                    "Unbenanntes Projekt",
+                ),
+            )
+
+        print(
+            "Der Build wird trotzdem fortgesetzt."
+        )
+        print("")
 
 
 # ============================================================
@@ -682,9 +700,7 @@ html_page = f"""
     </title>
 
 
-    <!-- ==================================================
-         BASIC SEO
-    =================================================== -->
+    <!-- BASIC SEO -->
 
     <meta
         name="description"
@@ -699,9 +715,7 @@ html_page = f"""
     {canonical_html}
 
 
-    <!-- ==================================================
-         OPEN GRAPH
-    =================================================== -->
+    <!-- OPEN GRAPH -->
 
     <meta
         property="og:title"
@@ -731,9 +745,7 @@ html_page = f"""
     {social_image_html}
 
 
-    <!-- ==================================================
-         TWITTER / SOCIAL
-    =================================================== -->
+    <!-- TWITTER / SOCIAL -->
 
     <meta
         name="twitter:card"
@@ -751,9 +763,7 @@ html_page = f"""
     >
 
 
-    <!-- ==================================================
-         WEBSITE
-    =================================================== -->
+    <!-- WEBSITE -->
 
     <meta
         name="theme-color"
@@ -777,9 +787,7 @@ html_page = f"""
     ></script>
 
 
-    <!-- ==================================================
-         STRUCTURED DATA
-    =================================================== -->
+    <!-- STRUCTURED DATA -->
 
     <script type="application/ld+json">
         {structured_data}
@@ -957,25 +965,19 @@ html_page = f"""
     aria-label="Fotografie, Film, Social Content"
 >
 
-    <span>
-        Fotografie
-    </span>
+    <span>Fotografie</span>
 
     <i aria-hidden="true">
         ✳
     </i>
 
-    <span>
-        Film & Video
-    </span>
+    <span>Film & Video</span>
 
     <i aria-hidden="true">
         ✳
     </i>
 
-    <span>
-        Social Content
-    </span>
+    <span>Social Content</span>
 
     <i aria-hidden="true">
         ✳
@@ -1229,9 +1231,7 @@ html_page = f"""
         </div>
 
 
-        <!-- ==================================================
-             NETLIFY FORM
-        =================================================== -->
+        <!-- NETLIFY FORM -->
 
         <form
             class="contact-form"
@@ -1247,8 +1247,6 @@ html_page = f"""
                 value="contact"
             >
 
-
-            <!-- SPAM-SCHUTZ -->
 
             <p hidden>
 
@@ -1686,12 +1684,15 @@ print("")
 print(
     "========================================"
 )
+
 print(
     "BLICKWERT BUILD"
 )
+
 print(
     "========================================"
 )
+
 
 print(
     "Modus:",
@@ -1702,6 +1703,7 @@ print(
     ),
 )
 
+
 print(
     "Website:",
     (
@@ -1711,10 +1713,12 @@ print(
     ),
 )
 
+
 print(
     "E-Mail:",
     contact_email,
 )
+
 
 print(
     "Instagram:",
@@ -1725,6 +1729,7 @@ print(
     ),
 )
 
+
 print(
     "Calendly:",
     (
@@ -1733,6 +1738,7 @@ print(
         else "nicht gesetzt"
     ),
 )
+
 
 print(
     "Impressum:",
@@ -1746,6 +1752,7 @@ print(
     ),
 )
 
+
 print(
     "Datenschutz:",
     (
@@ -1758,6 +1765,7 @@ print(
     ),
 )
 
+
 print(
     "Robots:",
     (
@@ -1766,6 +1774,7 @@ print(
         else "noindex,nofollow"
     ),
 )
+
 
 print(
     "Sitemap:",
@@ -1776,12 +1785,15 @@ print(
     ),
 )
 
+
 print(
     "Ausgabe:",
     OUT,
 )
 
+
 print(
     "========================================"
 )
+
 print("")
