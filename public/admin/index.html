@@ -2,6 +2,7 @@
 
 <html lang="de">
 <head>
+
   <meta charset="utf-8">
 
   <meta
@@ -26,31 +27,28 @@
     href="/assets/favicon.svg"
   >
 
+
   <style>
+
     /* =====================================================
-       BLICKWERT ADMIN THEME
+       NUR BLICKWERT-EIGENE ELEMENTE
+       Decap selbst wird NICHT überschrieben
     ===================================================== */
 
     :root {
-      --bw-bg: #0d1212;
-      --bw-bg-soft: #121717;
-      --bw-panel: #161d1c;
-      --bw-panel-hover: #1b2423;
+      --bw-bg: #121717;
+      --bw-bg-soft: #18201f;
 
       --bw-text: #f2f1e9;
-      --bw-muted: #98a29f;
+      --bw-muted: #9ca7a4;
 
       --bw-accent: #28d0c7;
-      --bw-accent-soft: rgba(40, 208, 199, 0.12);
 
-      --bw-border: rgba(242, 241, 233, 0.10);
-      --bw-border-strong: rgba(242, 241, 233, 0.18);
-
-      --bw-radius: 14px;
-      --bw-radius-lg: 20px;
+      --bw-border:
+        rgba(255, 255, 255, 0.12);
 
       --bw-shadow:
-        0 20px 60px rgba(0, 0, 0, 0.22);
+        0 18px 60px rgba(0, 0, 0, 0.32);
     }
 
 
@@ -59,10 +57,22 @@
     }
 
 
-    html,
-    body {
-      min-height: 100%;
-      margin: 0;
+    /* =====================================================
+       LADEBILDSCHIRM
+    ===================================================== */
+
+    #blickwert-loader {
+      position: fixed;
+
+      inset: 0;
+
+      z-index: 9999999;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 24px;
 
       background: var(--bw-bg);
 
@@ -74,208 +84,24 @@
         "Segoe UI",
         Arial,
         sans-serif;
-
-      -webkit-font-smoothing: antialiased;
     }
 
 
-    body {
-      overflow-x: hidden;
-    }
+    .loader-card {
+      width: min(620px, 100%);
 
-
-    /* =====================================================
-       BLICKWERT TOPBAR
-    ===================================================== */
-
-    #blickwert-admin-bar {
-      position: fixed;
-
-      top: 0;
-      left: 0;
-      right: 0;
-
-      z-index: 999999;
-
-      height: 64px;
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      padding: 0 20px;
-
-      background:
-        rgba(13, 18, 18, 0.94);
-
-      border-bottom:
-        1px solid var(--bw-border);
-
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-
-      box-shadow:
-        0 10px 40px rgba(0, 0, 0, 0.15);
-    }
-
-
-    .blickwert-admin-brand {
-      display: flex;
-      align-items: center;
-
-      gap: 14px;
-
-      min-width: 0;
-    }
-
-
-    .blickwert-admin-logo {
-      display: flex;
-      align-items: center;
-
-      height: 28px;
-    }
-
-
-    .blickwert-admin-logo img {
-      display: block;
-
-      width: auto;
-      height: 28px;
-    }
-
-
-    .blickwert-admin-divider {
-      width: 1px;
-      height: 24px;
-
-      background:
-        var(--bw-border-strong);
-    }
-
-
-    .blickwert-admin-copy {
-      display: flex;
-      flex-direction: column;
-
-      line-height: 1.1;
-    }
-
-
-    .blickwert-admin-copy strong {
-      color: var(--bw-text);
-
-      font-size: 13px;
-      font-weight: 700;
-
-      letter-spacing: 0.04em;
-
-      text-transform: uppercase;
-    }
-
-
-    .blickwert-admin-copy span {
-      margin-top: 4px;
-
-      color: var(--bw-muted);
-
-      font-size: 11px;
-
-      letter-spacing: 0.03em;
-    }
-
-
-    .blickwert-admin-actions {
-      display: flex;
-      align-items: center;
-
-      gap: 10px;
-    }
-
-
-    .admin-site-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-
-      gap: 8px;
-
-      min-height: 40px;
-
-      padding: 0 17px;
-
-      border:
-        1px solid var(--bw-border-strong);
-
-      border-radius: 999px;
-
-      background:
-        rgba(255, 255, 255, 0.025);
-
-      color: var(--bw-text);
-
-      font-size: 13px;
-      font-weight: 600;
-
-      text-decoration: none;
-
-      transition:
-        color 0.2s ease,
-        background 0.2s ease,
-        border-color 0.2s ease,
-        transform 0.2s ease;
-    }
-
-
-    .admin-site-button:hover {
-      color: #071010;
-
-      background: var(--bw-accent);
-
-      border-color: var(--bw-accent);
-
-      transform: translateY(-1px);
-    }
-
-
-    .admin-site-button:focus-visible {
-      outline:
-        2px solid var(--bw-accent);
-
-      outline-offset: 3px;
-    }
-
-
-    /* =====================================================
-       SETUP / LADEBILDSCHIRM
-    ===================================================== */
-
-    #setup {
-      width:
-        min(680px, calc(100% - 40px));
-
-      margin:
-        0 auto;
-
-      padding:
-        150px 0 80px;
-    }
-
-
-    .setup-card {
       padding: 42px;
 
       border:
         1px solid var(--bw-border);
 
-      border-radius:
-        var(--bw-radius-lg);
+      border-radius: 22px;
 
       background:
         linear-gradient(
           145deg,
-          rgba(255, 255, 255, 0.035),
-          rgba(255, 255, 255, 0.015)
+          rgba(255,255,255,0.045),
+          rgba(255,255,255,0.015)
         );
 
       box-shadow:
@@ -283,22 +109,30 @@
     }
 
 
-    #setup .setup-mark {
+    .loader-logo {
+      display: block;
+
+      width: 200px;
+      max-width: 65%;
+
+      margin-bottom: 38px;
+    }
+
+
+    .loader-label {
       display: inline-flex;
-      align-items: center;
-      justify-content: center;
 
-      margin-bottom: 26px;
+      margin-bottom: 20px;
 
-      padding: 8px 12px;
+      padding: 7px 11px;
 
       border:
-        1px solid rgba(40, 208, 199, 0.22);
+        1px solid rgba(40, 208, 199, 0.25);
 
       border-radius: 999px;
 
       background:
-        var(--bw-accent-soft);
+        rgba(40, 208, 199, 0.08);
 
       color:
         var(--bw-accent);
@@ -306,23 +140,18 @@
       font-size: 11px;
       font-weight: 700;
 
-      letter-spacing: 0.12em;
+      letter-spacing: 0.11em;
 
       text-transform: uppercase;
     }
 
 
-    #setup h1 {
-      max-width: 560px;
-
+    .loader-card h1 {
       margin:
-        0 0 20px;
-
-      color:
-        var(--bw-text);
+        0 0 18px;
 
       font-size:
-        clamp(42px, 8vw, 68px);
+        clamp(42px, 7vw, 68px);
 
       font-weight: 600;
 
@@ -333,22 +162,26 @@
     }
 
 
-    #setup h1 span {
+    .loader-card h1 span {
       color:
         var(--bw-accent);
     }
 
 
-    #setup p,
-    #setup li {
+    .loader-card p {
+      margin:
+        0;
+
       color:
         var(--bw-muted);
+
+      font-size: 15px;
 
       line-height: 1.7;
     }
 
 
-    #status {
+    #loader-status {
       display: flex;
       align-items: center;
 
@@ -357,19 +190,17 @@
       margin-top: 28px;
 
       color:
-        var(--bw-accent) !important;
+        var(--bw-text);
 
       font-weight: 600;
     }
 
 
-    #status::before {
+    #loader-status::before {
       content: "";
 
       width: 8px;
       height: 8px;
-
-      flex: 0 0 auto;
 
       border-radius: 50%;
 
@@ -382,254 +213,177 @@
     }
 
 
-    #instructions {
-      margin-top: 32px;
+    /* =====================================================
+       BLICKWERT ADMIN DOCK
+    ===================================================== */
 
-      padding-top: 26px;
+    #blickwert-dock {
+      position: fixed;
 
-      border-top:
-        1px solid var(--bw-border);
-    }
+      left: 50%;
+      bottom: 20px;
 
+      z-index: 9999998;
 
-    #instructions a {
-      color:
-        var(--bw-accent);
-    }
+      display: flex;
+      align-items: center;
 
+      gap: 14px;
 
-    #instructions code {
-      padding: 3px 7px;
+      max-width:
+        calc(100vw - 28px);
+
+      padding:
+        9px 10px 9px 16px;
 
       border:
         1px solid var(--bw-border);
 
-      border-radius: 6px;
+      border-radius: 999px;
 
       background:
-        rgba(255, 255, 255, 0.04);
+        rgba(18, 23, 23, 0.92);
 
       color:
         var(--bw-text);
+
+      box-shadow:
+        var(--bw-shadow);
+
+      backdrop-filter:
+        blur(18px);
+
+      -webkit-backdrop-filter:
+        blur(18px);
+
+      transform:
+        translateX(-50%);
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
     }
 
 
-    /* =====================================================
-       DECAP CMS BASIS
-    ===================================================== */
+    .dock-brand {
+      display: flex;
+      align-items: center;
 
-    #nc-root {
-      padding-top: 64px !important;
+      gap: 11px;
+
+      min-width: 0;
+    }
+
+
+    .dock-brand img {
+      display: block;
+
+      width: 110px;
+      height: auto;
+    }
+
+
+    .dock-divider {
+      width: 1px;
+      height: 26px;
+
+      flex: 0 0 auto;
 
       background:
-        var(--bw-bg) !important;
+        var(--bw-border);
     }
 
 
-    #nc-root,
-    #nc-root > div {
-      min-height: 100vh;
+    .dock-title {
+      display: flex;
+      flex-direction: column;
 
-      background-color:
-        var(--bw-bg) !important;
+      min-width: 0;
+
+      line-height: 1.05;
     }
 
 
-    /*
-      Decap nutzt intern dynamische Klassen.
-      Deshalb bleiben die Overrides bewusst
-      möglichst allgemein.
-    */
+    .dock-title strong {
+      font-size: 12px;
 
+      white-space: nowrap;
 
-    #nc-root header {
-      border-color:
-        var(--bw-border) !important;
-
-      box-shadow: none !important;
+      letter-spacing: 0.03em;
     }
 
 
-    #nc-root aside {
-      border-color:
-        var(--bw-border) !important;
+    .dock-title span {
+      margin-top: 4px;
+
+      color:
+        var(--bw-muted);
+
+      font-size: 10px;
+
+      white-space: nowrap;
     }
 
 
-    /* =====================================================
-       INPUTS
-    ===================================================== */
+    .dock-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
 
-    #nc-root input,
-    #nc-root textarea,
-    #nc-root select {
+      gap: 7px;
+
+      min-height: 40px;
+
+      padding:
+        0 16px;
+
       border:
-        1px solid var(--bw-border-strong)
-        !important;
+        1px solid rgba(40, 208, 199, 0.32);
 
       border-radius:
-        12px !important;
+        999px;
 
       background:
-        var(--bw-panel) !important;
+        rgba(40, 208, 199, 0.08);
 
       color:
-        var(--bw-text) !important;
+        var(--bw-accent);
 
-      box-shadow:
-        none !important;
+      font-size: 12px;
+      font-weight: 700;
+
+      white-space: nowrap;
+
+      text-decoration: none;
 
       transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease,
-        background 0.2s ease;
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
     }
 
 
-    #nc-root textarea {
-      min-height: 120px;
-    }
+    .dock-link:hover {
+      background:
+        var(--bw-accent);
 
-
-    #nc-root input:hover,
-    #nc-root textarea:hover,
-    #nc-root select:hover {
-      border-color:
-        rgba(40, 208, 199, 0.40)
-        !important;
-    }
-
-
-    #nc-root input:focus,
-    #nc-root textarea:focus,
-    #nc-root select:focus {
-      border-color:
-        var(--bw-accent)
-        !important;
-
-      outline: none !important;
-
-      box-shadow:
-        0 0 0 3px
-        rgba(40, 208, 199, 0.11)
-        !important;
-    }
-
-
-    #nc-root input::placeholder,
-    #nc-root textarea::placeholder {
       color:
-        rgba(242, 241, 233, 0.38)
-        !important;
-    }
+        #071010;
 
-
-    /* =====================================================
-       BUTTONS
-    ===================================================== */
-
-    #nc-root button {
-      border-radius:
-        10px !important;
-
-      transition:
-        transform 0.16s ease,
-        opacity 0.16s ease,
-        border-color 0.16s ease
-        !important;
-    }
-
-
-    #nc-root button:hover {
       transform:
         translateY(-1px);
     }
 
 
-    #nc-root button:focus-visible {
+    .dock-link:focus-visible {
       outline:
-        2px solid var(--bw-accent)
-        !important;
+        2px solid var(--bw-accent);
 
       outline-offset:
-        2px;
-    }
-
-
-    /* =====================================================
-       LINKS
-    ===================================================== */
-
-    #nc-root a {
-      transition:
-        opacity 0.18s ease,
-        color 0.18s ease;
-    }
-
-
-    #nc-root a:hover {
-      opacity: 0.78;
-    }
-
-
-    /* =====================================================
-       CARDS / PANELS
-    ===================================================== */
-
-    #nc-root
-    [class*="Card"],
-
-    #nc-root
-    [class*="card"],
-
-    #nc-root
-    [class*="Panel"],
-
-    #nc-root
-    [class*="panel"] {
-      border-color:
-        var(--bw-border)
-        !important;
-
-      border-radius:
-        var(--bw-radius)
-        !important;
-
-      box-shadow:
-        none !important;
-    }
-
-
-    /* =====================================================
-       SCROLLBAR
-    ===================================================== */
-
-    ::-webkit-scrollbar {
-      width: 10px;
-      height: 10px;
-    }
-
-
-    ::-webkit-scrollbar-track {
-      background:
-        var(--bw-bg);
-    }
-
-
-    ::-webkit-scrollbar-thumb {
-      border:
-        3px solid var(--bw-bg);
-
-      border-radius: 999px;
-
-      background:
-        #35413f;
-    }
-
-
-    ::-webkit-scrollbar-thumb:hover {
-      background:
-        var(--bw-accent);
+        3px;
     }
 
 
@@ -637,55 +391,52 @@
        MOBILE
     ===================================================== */
 
-    @media (max-width: 720px) {
+    @media (max-width: 650px) {
 
-      #blickwert-admin-bar {
-        height: 58px;
+      #blickwert-dock {
+        bottom: 12px;
+
+        width:
+          calc(100vw - 24px);
+
+        justify-content:
+          space-between;
 
         padding:
-          0 12px;
+          8px 8px 8px 13px;
       }
 
 
-      #nc-root {
-        padding-top:
-          58px !important;
-      }
-
-
-      .blickwert-admin-divider,
-      .blickwert-admin-copy span {
+      .dock-divider,
+      .dock-title span {
         display: none;
       }
 
 
-      .blickwert-admin-logo img {
-        max-width: 120px;
-
-        height: 24px;
+      .dock-brand {
+        gap: 8px;
       }
 
 
-      .admin-site-button {
-        min-height: 38px;
+      .dock-brand img {
+        width: 92px;
+      }
 
+
+      .dock-title strong {
+        font-size: 11px;
+      }
+
+
+      .dock-link {
         padding:
           0 13px;
-
-        font-size:
-          12px;
       }
 
 
-      #setup {
-        padding-top:
-          110px;
-      }
-
-
-      .setup-card {
+      .loader-card {
         padding:
-          28px 22px;
+          30px 24px;
       }
 
     }
@@ -699,32 +450,67 @@
 
 
 <!-- =======================================================
-     BLICKWERT ADMIN BAR
+     BLICKWERT LADEBILDSCHIRM
 ======================================================== -->
 
-<header id="blickwert-admin-bar">
+<div id="blickwert-loader">
 
-  <div class="blickwert-admin-brand">
+  <div class="loader-card">
 
-    <a
-      class="blickwert-admin-logo"
-      href="/admin/"
-      aria-label="Blickwert Admin Startseite"
+    <img
+      class="loader-logo"
+      src="/assets/logo.svg"
+      alt="Blickwert Studio"
     >
-      <img
-        src="/assets/logo.svg"
-        alt="Blickwert Studio"
-      >
-    </a>
+
+
+    <div class="loader-label">
+      Studio Admin
+    </div>
+
+
+    <h1>
+      Dein Studio.<br>
+      <span>Deine Inhalte.</span>
+    </h1>
+
+
+    <p>
+      Projekte, Leistungen, Bilder und Website-Inhalte
+      zentral verwalten.
+    </p>
+
+
+    <div id="loader-status">
+      CMS wird geladen …
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =======================================================
+     BLICKWERT DOCK
+======================================================== -->
+
+<div id="blickwert-dock">
+
+  <div class="dock-brand">
+
+    <img
+      src="/assets/logo.svg"
+      alt="Blickwert Studio"
+    >
 
 
     <span
-      class="blickwert-admin-divider"
+      class="dock-divider"
       aria-hidden="true"
     ></span>
 
 
-    <div class="blickwert-admin-copy">
+    <div class="dock-title">
 
       <strong>
         Studio Admin
@@ -739,88 +525,20 @@
   </div>
 
 
-  <div class="blickwert-admin-actions">
+  <a
+    class="dock-link"
+    href="/"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    Website ansehen
 
-    <a
-      class="admin-site-button"
-      href="/"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      Website ansehen
+    <span aria-hidden="true">
+      ↗
+    </span>
+  </a>
 
-      <span aria-hidden="true">
-        ↗
-      </span>
-    </a>
-
-  </div>
-
-</header>
-
-
-<!-- =======================================================
-     LADEBILDSCHIRM
-======================================================== -->
-
-<main id="setup">
-
-  <div class="setup-card">
-
-    <div class="setup-mark">
-      Blickwert CMS
-    </div>
-
-
-    <h1>
-      Dein Studio.<br>
-      <span>Deine Inhalte.</span>
-    </h1>
-
-
-    <p>
-      Projekte, Leistungen, Bilder und Website-Inhalte
-      zentral an einem Ort verwalten.
-    </p>
-
-
-    <p id="status">
-      Verbindung wird geprüft …
-    </p>
-
-
-    <div
-      id="instructions"
-      hidden
-    >
-
-      <p>
-        Die Inhaltsverwaltung ist vorbereitet,
-        aber die Verbindung zum Repository
-        wurde noch nicht vollständig eingerichtet.
-      </p>
-
-      <ol>
-
-        <li>
-          GitHub-Repository verbinden.
-        </li>
-
-        <li>
-          Website über Netlify deployen.
-        </li>
-
-        <li>
-          GitHub OAuth aktivieren.
-        </li>
-
-      </ol>
-
-    </div>
-
-  </div>
-
-</main>
+</div>
 
 
 <!-- =======================================================
@@ -838,7 +556,7 @@
 
       if (!response.ok) {
         throw new Error(
-          "CMS-Konfiguration nicht erreichbar."
+          "CMS-Konfiguration konnte nicht geladen werden."
         );
       }
 
@@ -847,28 +565,6 @@
     })
 
     .then((config) => {
-
-      if (
-        config.backend.repo
-        &&
-        config.backend.repo.startsWith(
-          "SETUP_REQUIRED/"
-        )
-      ) {
-
-        document.querySelector(
-          "#status"
-        ).textContent =
-          "Einrichtung noch nicht abgeschlossen.";
-
-        document.querySelector(
-          "#instructions"
-        ).hidden = false;
-
-        return;
-
-      }
-
 
       const script =
         document.createElement(
@@ -882,16 +578,6 @@
 
       script.onload = () => {
 
-        const setup =
-          document.querySelector(
-            "#setup"
-          );
-
-        if (setup) {
-          setup.remove();
-        }
-
-
         CMS.init({
           config,
           load_config_file: false,
@@ -899,8 +585,8 @@
 
 
         /*
-         * Falls Decap eine Vorschau anzeigt,
-         * wird das echte Website-CSS geladen.
+         * Website-CSS nur für Decap Preview.
+         * NICHT für die CMS-Oberfläche.
          */
 
         try {
@@ -912,8 +598,34 @@
         } catch (error) {
 
           console.info(
-            "Preview-Styles konnten nicht registriert werden.",
+            "Preview-Style nicht geladen:",
             error
+          );
+
+        }
+
+
+        /*
+         * Ladebildschirm entfernen.
+         */
+
+        const loader =
+          document.querySelector(
+            "#blickwert-loader"
+          );
+
+        if (loader) {
+
+          loader.style.opacity =
+            "0";
+
+          loader.style.transition =
+            "opacity 0.25s ease";
+
+
+          setTimeout(
+            () => loader.remove(),
+            250
           );
 
         }
@@ -924,9 +636,9 @@
       script.onerror = () => {
 
         document.querySelector(
-          "#status"
+          "#loader-status"
         ).textContent =
-          "Die Inhaltsverwaltung konnte nicht geladen werden.";
+          "CMS konnte nicht geladen werden.";
 
       };
 
@@ -942,9 +654,9 @@
       console.error(error);
 
       document.querySelector(
-        "#status"
+        "#loader-status"
       ).textContent =
-        "CMS-Konfiguration nicht erreichbar. Bitte neu deployen.";
+        "CMS-Konfiguration nicht erreichbar.";
 
     });
 
