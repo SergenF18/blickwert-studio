@@ -1,10 +1,12 @@
+from content_loader import load_content
 from pathlib import Path
+from cms_config import build_config
 import json,html,shutil,os,re
 BASE=Path(__file__).resolve().parent.parent
 OUT=BASE/'dist'
 if OUT.exists():shutil.rmtree(OUT)
 shutil.copytree(BASE/'public',OUT)
-s=json.loads((BASE/'content/site.json').read_text())
+s = load_content(BASE)
 def e(v):return html.escape(str(v),quote=True)
 def safe_url(v):
  return v if v.startswith(('https://','http://','/assets/','/uploads/')) else ''
@@ -39,8 +41,16 @@ url=os.getenv('REPOSITORY_URL','')
 if not repo and 'github.com' in url:repo=re.sub(r'^.*github.com[:/]','',url).removesuffix('.git')
 if repo and not re.fullmatch(r'[\w.-]+/[\w.-]+',repo):raise ValueError('Ungültiges GITHUB_REPOSITORY')
 def field(name,label,widget='string',**extra):return dict(name=name,label=label,widget=widget,**extra)
-fields=[field('brand','Markenname'),field('location','Standort'),field('headline','Überschrift (Zeilenumbruch möglich)','text'),field('intro','Einleitung','text'),field('hero_image','Titelbild (optional)','image',required=False),field('hero_image_alt','Bildbeschreibung Titelbild',required=False),field('about_title','Studio-Überschrift'),field('about_text','Über mich','text'),field('portrait','Porträt','image',required=False),field('email','Kontakt-E-Mail',required=False),field('instagram','Instagram-URL',required=False),field('contact_title','Kontakt-Überschrift'),field('contact_text','Kontakt-Text','text'),field('services','Leistungen','list',fields=[field('title','Titel'),field('text','Beschreibung','text'),field('tags','Stichworte')]),field('process','Ablauf','list',fields=[field('title','Titel'),field('text','Beschreibung','text')]),field('projects','Projekte','list',summary='{{fields.title}}',fields=[field('title','Titel'),field('category','Kategorie','select',options=['Foto','Film','Social']),field('description','Beschreibung','text'),field('image','Vorschaubild','image',required=False),field('image_alt','Bildbeschreibung',required=False),field('video','Direkte Video-URL (MP4/WebM)','string',required=False),field('visible','Auf Website anzeigen','boolean',default=True),field('placeholder','Als Gestaltungsvorschau kennzeichnen','boolean',default=False),field('theme','Farbe ohne Bild','select',options=['space','detail','motion'],default='space')]),field('imprint','Impressum','text',required=False),field('privacy','Datenschutz','text',required=False)]
-config={'backend':{'name':'github','repo':repo or 'SETUP_REQUIRED/blickwert-studio','branch':os.getenv('CMS_BRANCH','main')},'media_folder':'public/uploads','public_folder':'/uploads','locale':'de','logo_url':'/assets/logo.svg','collections':[{'name':'website','label':'Website','files':[{'name':'site','label':'Website-Inhalte','file':'content/site.json','format':'json','fields':fields}]}]}
-(OUT/'admin/config.json').write_text(json.dumps(config,ensure_ascii=False))
-(OUT/'robots.txt').write_text('User-agent: *\nDisallow: /\n' if preview else 'User-agent: *\nDisallow: /admin/\n')
-print('Build erfolgreich:',OUT,'| Vorschau:',preview,'| CMS konfiguriert:',bool(repo))
+
+config = build_config(
+    repo or "SergenF18/blickwert-studio",
+    os.getenv("CMS_BRANCH", "main"),
+)
+
+(OUT / "admin/config.json").write_text(
+    json.dumps(
+        config,
+        ensure_ascii=False,
+        indent=2,
+    )
+)

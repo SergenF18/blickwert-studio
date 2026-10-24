@@ -1,0 +1,32 @@
+{
+  "brand": "Blickwert Studio",
+  "location": "Gummersbach · NRW",
+  "headline": "Ein guter Auftritt.\nBleibt im Kopf.",
+  "intro": "Fotos, Filme und Social Content für Unternehmen, die zeigen wollen, was sie besonders macht.",
+  "hero_image": "",
+  "hero_image_alt": "",
+  "about_title": "Gute Bilder beginnen mit einem guten Blick.",
+  "about_text": "Ich bin Sergen. Fotograf, Videograf und der Mensch hinter Blickwert Studio. Ich begleite Unternehmen von der ersten Idee bis zum fertigen Content. Persönlich, mit einem klaren Blick für Details und einem Stil, der zu euch passt.",
+  "portrait": "",
+  "email": "",
+  "instagram": "",
+  "services": [
+    {"title": "Fotografie", "text": "Menschen, Räume, Produkte. Bilder, die euer Unternehmen zeigen, wie es ist – mit Charakter und einem stimmigen Look.", "tags": "Business · Gastronomie · Produkte"},
+    {"title": "Film & Video", "text": "Vom ersten Eindruck bis zum Blick hinter die Kulissen. Filme, die Atmosphäre vermitteln und eure Geschichte erzählen.", "tags": "Imagefilm · Event · Brandfilm"},
+    {"title": "Social Content", "text": "Reels und Fotos, die zusammenpassen. Einzeln produziert oder regelmäßig geplant, damit euer Auftritt lebendig bleibt.", "tags": "Reels · Content-Tage · Betreuung"}
+  ],
+  "projects": [
+    {"title": "Räume. Die wirken.", "category": "Film", "description": "Hier wird ein Restaurantfilm oder ein Raumprojekt vorgestellt. Ersetze diese Gestaltungsvorschau durch ein eigenes Kundenprojekt.", "image": "", "image_alt": "", "video": "", "visible": true, "placeholder": true, "theme": "space"},
+    {"title": "Details. Mit Charakter.", "category": "Foto", "description": "Hier ist Platz für eine ausgewählte Fotostrecke. Die abstrakte Grafik ist ein Platzhalter, keine Kundenarbeit.", "image": "", "image_alt": "", "video": "", "visible": true, "placeholder": true, "theme": "detail"},
+    {"title": "Momente. In Bewegung.", "category": "Social", "description": "Hier können Reels, Events oder regelmäßige Content-Produktionen gezeigt werden. Noch keine veröffentlichte Referenz.", "image": "", "image_alt": "", "video": "", "visible": true, "placeholder": true, "theme": "motion"}
+  ],
+  "process": [
+    {"title": "Erst mal kennenlernen.", "text": "Was macht euch aus? Wen wollt ihr erreichen? Wir sprechen über eure Idee und finden heraus, was ihr wirklich braucht."},
+    {"title": "Ideen werden Bilder.", "text": "Wir planen Motive, Ablauf und Formate. Beim Shooting oder Dreh entsteht daraus Content mit einer klaren Richtung."},
+    {"title": "Bereit für euren Auftritt.", "text": "Ihr bekommt die fertigen Bilder und Videos in den vereinbarten Formaten. Auf Wunsch geht es regelmäßig weiter."}
+  ],
+  "contact_title": "Was habt ihr vor?",
+  "contact_text": "Ein neuer Auftritt, ein konkretes Projekt oder einfach eine erste Idee. Erzählt mir davon.",
+  "imprint": "",
+  "privacy": ""
+}
