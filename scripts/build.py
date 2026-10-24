@@ -24,7 +24,7 @@ shutil.copytree(
     OUT,
 )
 
-# Inhalte aus der neuen Content-Struktur laden
+# Inhalte aus der CMS-/Content-Struktur laden
 s = load_content(BASE)
 
 
@@ -46,6 +46,20 @@ SITE_LIVE = (
 )
 
 preview = not SITE_LIVE
+
+
+# ============================================================
+# FESTE FALLBACK-KONTAKTDATEN
+# ============================================================
+
+# Wichtig:
+# Diese Werte greifen auch dann,
+# wenn das CMS-Feld aus irgendeinem Grund leer ist.
+
+contact_email = (
+    s.get("email")
+    or "kontakt@blickwert-studio.de"
+)
 
 
 # ============================================================
@@ -120,6 +134,21 @@ def img(
 
 
 # ============================================================
+# INSTAGRAM / CALENDLY
+# ============================================================
+
+instagram = safe_url(
+    s.get("instagram")
+    or "https://www.instagram.com/blickwert.studio/"
+)
+
+calendly = safe_url(
+    s.get("calendly")
+    or "https://calendly.com/sergen-captured/erstgesprach"
+)
+
+
+# ============================================================
 # LIVE-MODUS VALIDIERUNG
 # ============================================================
 
@@ -133,8 +162,8 @@ if not preview:
     )
 
     assert (
-        s.get("email")
-        and "@" in s["email"]
+        contact_email
+        and "@" in contact_email
     ), (
         "Kontakt-E-Mail fehlt"
     )
@@ -247,13 +276,16 @@ for n, project in enumerate(projects):
             data-project="{n}"
             aria-label="Projekt ansehen: {e(project['title'])}"
         >
+
             <div class="project-visual {theme}">
                 {media}
                 {placeholder_note}
             </div>
 
             <div class="project-meta">
+
                 <div>
+
                     <h3>
                         {e(project['title'])}
                     </h3>
@@ -262,6 +294,7 @@ for n, project in enumerate(projects):
                         {e(project['category'])}
                         / BLICKWERT STUDIO
                     </p>
+
                 </div>
 
                 <span
@@ -270,8 +303,11 @@ for n, project in enumerate(projects):
                 >
                     ↗
                 </span>
+
             </div>
+
         </button>
+
     </article>
     """
 
@@ -293,6 +329,7 @@ services = "".join(
         </h3>
 
         <div>
+
             <p>
                 {e(service["text"])}
             </p>
@@ -300,6 +337,7 @@ services = "".join(
             <span class="tags">
                 {e(service["tags"])}
             </span>
+
         </div>
 
     </article>
@@ -425,29 +463,9 @@ portrait = (
 
 
 # ============================================================
-# KONTAKT / INSTAGRAM / CALENDLY
+# KONTAKT / SOCIAL LINKS
 # ============================================================
 
-instagram = safe_url(
-    s.get("instagram")
-    or
-    "https://www.instagram.com/blickwert.studio/"
-)
-
-calendly = safe_url(
-    s.get("calendly")
-    or
-    "https://calendly.com/sergen-captured/erstgesprach"
-)
-
-contact_email = (
-    s.get("email")
-    or
-    "kontakt@blickwert-studio.de"
-)
-
-
-# Instagram-Link im Footer
 navsocial = (
     f"""
     <a
@@ -463,7 +481,6 @@ navsocial = (
 )
 
 
-# Sichtbare Kontaktbuttons
 contact_actions = f"""
 <div class="contact-actions">
 
@@ -474,6 +491,7 @@ contact_actions = f"""
         rel="noopener noreferrer"
         aria-label="Erstgespräch über Calendly buchen"
     >
+
         <span>
             Erstgespräch buchen
         </span>
@@ -481,6 +499,7 @@ contact_actions = f"""
         <span aria-hidden="true">
             ↗
         </span>
+
     </a>
 
 
@@ -491,6 +510,7 @@ contact_actions = f"""
         rel="noopener noreferrer"
         aria-label="Blickwert Studio auf Instagram ansehen"
     >
+
         <span>
             Instagram ansehen
         </span>
@@ -498,6 +518,7 @@ contact_actions = f"""
         <span aria-hidden="true">
             ↗
         </span>
+
     </a>
 
 
@@ -506,6 +527,7 @@ contact_actions = f"""
         href="mailto:{e(contact_email)}"
         aria-label="E-Mail an Blickwert Studio schreiben"
     >
+
         <span>
             E-Mail schreiben
         </span>
@@ -513,6 +535,7 @@ contact_actions = f"""
         <span aria-hidden="true">
             ↗
         </span>
+
     </a>
 
 </div>
@@ -592,6 +615,7 @@ organization_data = {
         s["intro"],
 }
 
+
 if canonical_url:
 
     organization_data[
@@ -605,11 +629,13 @@ if canonical_url:
         + "/assets/logo.svg"
     )
 
+
 if contact_email:
 
     organization_data[
         "email"
     ] = contact_email
+
 
 if instagram:
 
@@ -618,6 +644,7 @@ if instagram:
     ] = [
         instagram
     ]
+
 
 structured_data = json.dumps(
     organization_data,
@@ -641,17 +668,14 @@ html_page = f"""
 
 <html lang="de">
 
-
 <head>
 
     <meta charset="utf-8">
-
 
     <meta
         name="viewport"
         content="width=device-width,initial-scale=1"
     >
-
 
     <title>
         {e(s['brand'])} — Foto, Film & Social Content
@@ -662,18 +686,15 @@ html_page = f"""
          BASIC SEO
     =================================================== -->
 
-
     <meta
         name="description"
         content="{e(s['intro'])}"
     >
 
-
     <meta
         name="robots"
         content="{'noindex,nofollow' if preview else 'index,follow'}"
     >
-
 
     {canonical_html}
 
@@ -682,36 +703,30 @@ html_page = f"""
          OPEN GRAPH
     =================================================== -->
 
-
     <meta
         property="og:title"
         content="{e(s['brand'])} — Foto, Film & Social Content"
     >
-
 
     <meta
         property="og:description"
         content="{e(s['intro'])}"
     >
 
-
     <meta
         property="og:type"
         content="website"
     >
-
 
     <meta
         property="og:site_name"
         content="{e(s['brand'])}"
     >
 
-
     <meta
         property="og:locale"
         content="de_DE"
     >
-
 
     {social_image_html}
 
@@ -720,18 +735,15 @@ html_page = f"""
          TWITTER / SOCIAL
     =================================================== -->
 
-
     <meta
         name="twitter:card"
         content="summary_large_image"
     >
 
-
     <meta
         name="twitter:title"
         content="{e(s['brand'])} — Foto, Film & Social Content"
     >
-
 
     <meta
         name="twitter:description"
@@ -743,12 +755,10 @@ html_page = f"""
          WEBSITE
     =================================================== -->
 
-
     <meta
         name="theme-color"
         content="#121717"
     >
-
 
     <link
         rel="icon"
@@ -756,12 +766,10 @@ html_page = f"""
         href="/assets/favicon.svg"
     >
 
-
     <link
         rel="stylesheet"
         href="/styles.css"
     >
-
 
     <script
         src="/app.js"
@@ -773,11 +781,9 @@ html_page = f"""
          STRUCTURED DATA
     =================================================== -->
 
-
     <script type="application/ld+json">
         {structured_data}
     </script>
-
 
 </head>
 
@@ -797,11 +803,9 @@ html_page = f"""
      NAVIGATION
 ======================================================= -->
 
-
 <header class="header">
 
     <div class="wrap nav">
-
 
         <a
             href="#"
@@ -857,7 +861,6 @@ html_page = f"""
 
         </nav>
 
-
     </div>
 
 </header>
@@ -870,9 +873,7 @@ html_page = f"""
      HERO
 ======================================================= -->
 
-
 <section class="hero wrap">
-
 
     <div class="hero-top">
 
@@ -944,14 +945,12 @@ html_page = f"""
 
     </div>
 
-
 </section>
 
 
 <!-- ======================================================
      TICKER
 ======================================================= -->
-
 
 <div
     class="ticker"
@@ -992,7 +991,6 @@ html_page = f"""
 <!-- ======================================================
      ARBEITEN
 ======================================================= -->
-
 
 <section
     id="arbeiten"
@@ -1092,14 +1090,12 @@ html_page = f"""
         else ""
     }
 
-
 </section>
 
 
 <!-- ======================================================
      LEISTUNGEN
 ======================================================= -->
-
 
 <section
     id="leistungen"
@@ -1132,9 +1128,7 @@ html_page = f"""
 
         </div>
 
-
         {services}
-
 
     </div>
 
@@ -1145,7 +1139,6 @@ html_page = f"""
      STUDIO
 ======================================================= -->
 
-
 <section
     id="studio"
     class="section wrap about"
@@ -1155,23 +1148,19 @@ html_page = f"""
         {portrait}
     </div>
 
-
     <div>
 
         <div class="eyebrow">
             03 / Das Studio
         </div>
 
-
         <h2>
             {e(s['about_title'])}
         </h2>
 
-
         <p>
             {e(s['about_text'])}
         </p>
-
 
         <div class="signature">
 
@@ -1191,7 +1180,6 @@ html_page = f"""
 <!-- ======================================================
      ABLAUF
 ======================================================= -->
-
 
 <section class="section wrap process">
 
@@ -1215,7 +1203,6 @@ html_page = f"""
      KONTAKT
 ======================================================= -->
 
-
 <section
     id="kontakt"
     class="section contact"
@@ -1223,23 +1210,19 @@ html_page = f"""
 
     <div class="wrap contact-layout">
 
-
         <div>
 
             <div class="eyebrow">
                 05 / Dein nächstes Projekt
             </div>
 
-
             <h2>
                 {e(s['contact_title'])}
             </h2>
 
-
             <p>
                 {e(s['contact_text'])}
             </p>
-
 
             {contact_actions}
 
@@ -1250,7 +1233,6 @@ html_page = f"""
              NETLIFY FORM
         =================================================== -->
 
-
         <form
             class="contact-form"
             name="contact"
@@ -1258,7 +1240,6 @@ html_page = f"""
             data-netlify="true"
             netlify-honeypot="bot-field"
         >
-
 
             <input
                 type="hidden"
@@ -1268,7 +1249,6 @@ html_page = f"""
 
 
             <!-- SPAM-SCHUTZ -->
-
 
             <p hidden>
 
@@ -1288,7 +1268,6 @@ html_page = f"""
 
 
             <div class="form-row">
-
 
                 <label>
 
@@ -1317,7 +1296,6 @@ html_page = f"""
                     >
 
                 </label>
-
 
             </div>
 
@@ -1409,9 +1387,7 @@ html_page = f"""
                 aria-live="polite"
             ></p>
 
-
         </form>
-
 
     </div>
 
@@ -1425,12 +1401,9 @@ html_page = f"""
      FOOTER
 ======================================================= -->
 
-
 <footer class="footer wrap">
 
-
     <div class="footer-top">
-
 
         <a
             href="#"
@@ -1447,7 +1420,6 @@ html_page = f"""
 
 
         <div class="footer-links">
-
 
             {navsocial}
 
@@ -1476,28 +1448,22 @@ html_page = f"""
                 Studio-Login ↗
             </a>
 
-
         </div>
-
 
     </div>
 
 
     <div class="footer-bottom">
 
-
         <span>
             © 2026 BLICKWERT STUDIO · SERGEN FRANZ
         </span>
-
 
         <span>
             FOTO. FILM. EIN GUTER BLICK.
         </span>
 
-
     </div>
-
 
 </footer>
 
@@ -1506,12 +1472,10 @@ html_page = f"""
      DIALOG
 ======================================================= -->
 
-
 <dialog
     id="detail-dialog"
     aria-labelledby="dialog-title"
 >
-
 
     <button
         class="close"
@@ -1520,9 +1484,7 @@ html_page = f"""
         Schließen ×
     </button>
 
-
     <div id="dialog-content"></div>
-
 
 </dialog>
 
@@ -1542,7 +1504,6 @@ html_page = f"""
      WEBSITE-DATEN FÜR JAVASCRIPT
 ======================================================= -->
 
-
 <script
     type="application/json"
     id="site-data"
@@ -1557,15 +1518,22 @@ html_page = f"""
                 contact_email,
 
             "imprint":
-                s["imprint"],
+                s.get(
+                    "imprint",
+                    "",
+                ),
 
             "privacy":
-                s["privacy"],
+                s.get(
+                    "privacy",
+                    "",
+                ),
         },
         ensure_ascii=False,
     ).replace(
         "<",
-        chr(92) + "u003c"
+        chr(92)
+        + "u003c"
     )
 }
 </script>
@@ -1725,7 +1693,6 @@ print(
     "========================================"
 )
 
-
 print(
     "Modus:",
     (
@@ -1734,7 +1701,6 @@ print(
         else "PREVIEW"
     ),
 )
-
 
 print(
     "Website:",
@@ -1745,12 +1711,10 @@ print(
     ),
 )
 
-
 print(
     "E-Mail:",
     contact_email,
 )
-
 
 print(
     "Instagram:",
@@ -1761,7 +1725,6 @@ print(
     ),
 )
 
-
 print(
     "Calendly:",
     (
@@ -1771,6 +1734,29 @@ print(
     ),
 )
 
+print(
+    "Impressum:",
+    (
+        "vorhanden"
+        if s.get(
+            "imprint",
+            "",
+        ).strip()
+        else "FEHLT"
+    ),
+)
+
+print(
+    "Datenschutz:",
+    (
+        "vorhanden"
+        if s.get(
+            "privacy",
+            "",
+        ).strip()
+        else "FEHLT"
+    ),
+)
 
 print(
     "Robots:",
@@ -1781,7 +1767,6 @@ print(
     ),
 )
 
-
 print(
     "Sitemap:",
     (
@@ -1791,12 +1776,10 @@ print(
     ),
 )
 
-
 print(
     "Ausgabe:",
     OUT,
 )
-
 
 print(
     "========================================"
